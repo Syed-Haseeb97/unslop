@@ -1,0 +1,18 @@
+# Cursor Rules: Unslop Web Design Standards
+# Applied to all web, React, Tailwind, and HTML generation tasks.
+
+- Kill purple gradients: Never use `from-purple-500 to-indigo-600` or cosmic dark blur backgrounds.
+- No gradient text: Never use `bg-clip-text text-transparent bg-gradient-to-r`.
+- Lose the glow: No radial gradient glow divs or `blur-3xl` blobs.
+- No emojis in nav or headings: Do not use 🚀, ⚡, ✨ in links or brand labels.
+- Drop the pill above the headline: Never put an announcement pill capsule above the `h1`.
+- Plain English utility: Say what the tool actually accepts, does, and outputs. Cut hype words ("supercharge", "revolutionary", "seamless").
+- Stop centering everything: Use left-aligned prose and asymmetric 60/40 layouts.
+- One main button: One decisive Primary CTA; at most one discreet text link.
+- No fake reviews: No unverified testimonials or vanity logo banners.
+- Spacing on 4-point grid: Use multiples of 4px (p-1, p-2, p-3, p-4, p-6, p-8, p-12, p-16).
+- Not every corner is a pill: Avoid `rounded-full` everywhere; prefer `rounded-md` or `rounded-lg` with 1px stone hairlines (`#C8C2B5`).
+- Typography with character: Use `Instrument Serif` for headings, `Geist` for body, `Geist Mono` for code/data. Never default to Inter/Roboto.
+- Content-first cards: Cards must display actual syntax, tables, or real UI state, not 48px icon boxes with lorem ipsum.
+- No bouncing or idle bobbing animations: Static, calm, distraction-free. Snappy hover states only.
+- The Anchor: Every page must have one high-fidelity centerpiece worth looking at (e.g. an interactive live preview, code runner, or architecture diagram).

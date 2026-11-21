@@ -1,0 +1,14 @@
+{
+  "name": "unslop",
+  "version": "1.0.0",
+  "description": "The Agent Skill against generic AI SaaS slop",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

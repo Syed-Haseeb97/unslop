@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unslop — The AI Web Design Anti-Slop Benchmark</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Geist', sans-serif; }
+    iframe { border: none; width: 100%; height: 100%; }
+  </style>
+</head>
+<body class="bg-[#121316] text-[#E5E7EB] h-screen flex flex-col overflow-hidden">
+
+  <!-- TOP BAR CONTROLS -->
+  <header class="bg-[#1A1C20] border-b border-[#2C3038] px-6 py-3 flex items-center justify-between shrink-0">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-serif text-xl italic text-white font-semibold">Unslop</span>
+        <span class="text-[10px] font-mono uppercase bg-[#262930] text-[#9CA3AF] px-2 py-0.5 rounded border border-[#374151]">
+          Agent Skill Benchmark
+        </span>
+      </div>
+      <div class="h-4 w-[1px] bg-[#374151] hidden sm:block"></div>
+      <p class="text-xs text-[#9CA3AF] hidden sm:block">
+        Side-by-side comparison: Same product built with generic AI slop vs. <code class="text-white font-mono">unslop.md</code>.
+      </p>
+    </div>
+
+    <!-- VIEW TOGGLE BUTTONS -->
+    <div class="flex items-center bg-[#262930] p-1 rounded-lg border border-[#374151] text-xs font-medium">
+      <button onclick="setView('split')" id="btn-split" class="px-3 py-1.5 rounded-md bg-[#374151] text-white">
+        Split View
+      </button>
+      <button onclick="setView('slop')" id="btn-slop" class="px-3 py-1.5 rounded-md text-[#9CA3AF] hover:text-white">
+        1. The Slop (Before)
+      </button>
+      <button onclick="setView('unslop')" id="btn-unslop" class="px-3 py-1.5 rounded-md text-[#9CA3AF] hover:text-white">
+        2. The Unslop (After)
+      </button>
+    </div>
+  </header>
+
+  <!-- WORKSPACE FRAME CONTAINER -->
+  <div id="container" class="flex-1 grid grid-cols-2 divide-x divide-[#2C3038] bg-black overflow-hidden relative">
+
+    <!-- LEFT PANE: THE SLOP -->
+    <div id="pane-slop" class="flex flex-col h-full overflow-hidden">
+      <div class="bg-[#1F142A] border-b border-purple-500/20 px-4 py-2 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 text-xs font-mono text-purple-300">
+          <span>❌ THE SLOP</span>
+          <span class="text-[10px] text-purple-400/70">• Purple gradients, fake badges, glossy orbs, hype copy</span>
+        </div>
+        <a href="examples/slop.html" target="_blank" class="text-[11px] text-purple-300 underline hover:text-white font-mono">
+          Open in Tab ↗
+        </a>
+      </div>
+      <div class="flex-1 w-full h-full bg-[#0B0B14]">
+        <iframe src="examples/slop.html" title="Slop Version"></iframe>
+      </div>
+    </div>
+
+    <!-- RIGHT PANE: THE UNSLOP -->
+    <div id="pane-unslop" class="flex flex-col h-full overflow-hidden">
+      <div class="bg-[#F5F3EE] border-b border-[#C8C2B5] px-4 py-2 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2 text-xs font-mono text-[#16181D]">
+          <span>✓ THE UNSLOP</span>
+          <span class="text-[10px] text-[#5F626A]">• Archival paper, Instrument Serif, concrete utility, real SQL diff</span>
+        </div>
+        <a href="examples/unslop.html" target="_blank" class="text-[11px] text-[#16181D] underline font-mono">
+          Open in Tab ↗
+        </a>
+      </div>
+      <div class="flex-1 w-full h-full bg-[#F5F3EE]">
+        <iframe src="examples/unslop.html" title="Unslop Version"></iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setView(view) {
+      const container = document.getElementById('container');
+      const paneSlop = document.getElementById('pane-slop');
+      const paneUnslop = document.getElementById('pane-unslop');
+      const btnSplit = document.getElementById('btn-split');
+      const btnSlop = document.getElementById('btn-slop');
+      const btnUnslop = document.getElementById('btn-unslop');
+
+      // Reset buttons
+      [btnSplit, btnSlop, btnUnslop].forEach(b => {
+        b.className = "px-3 py-1.5 rounded-md text-[#9CA3AF] hover:text-white";
+      });
+
+      if (view === 'split') {
+        container.className = "flex-1 grid grid-cols-2 divide-x divide-[#2C3038] bg-black overflow-hidden relative";
+        paneSlop.classList.remove('hidden');
+        paneUnslop.classList.remove('hidden');
+        btnSplit.className = "px-3 py-1.5 rounded-md bg-[#374151] text-white";
+      } else if (view === 'slop') {
+        container.className = "flex-1 flex bg-black overflow-hidden relative";
+        paneSlop.classList.remove('hidden');
+        paneUnslop.classList.add('hidden');
+        btnSlop.className = "px-3 py-1.5 rounded-md bg-purple-900/60 text-purple-200 border border-purple-500/40";
+      } else if (view === 'unslop') {
+        container.className = "flex-1 flex bg-black overflow-hidden relative";
+        paneSlop.classList.add('hidden');
+        paneUnslop.classList.remove('hidden');
+        btnUnslop.className = "px-3 py-1.5 rounded-md bg-stone-700 text-white";
+      }
+    }
+  </script>
+</body>
+</html>

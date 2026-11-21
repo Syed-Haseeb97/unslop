@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SchemaForge — Deterministic, Zero-Downtime Postgres Migrations</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Instrument Serif, Geist, Geist Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+            sans: ['Geist', 'system-ui', 'sans-serif'],
+            mono: ['"Geist Mono"', 'monospace'],
+          },
+          colors: {
+            canvas: '#F5F3EE',
+            surface: '#FFFFFF',
+            line: '#C8C2B5',
+            ink: '#16181D',
+            graphite: '#5F626A',
+            sage: '#1D6B52',
+            'sage-soft': '#E3EFE8',
+            terracotta: '#B53A26',
+            'terracotta-soft': '#F8E9E4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Geist', sans-serif;
+      background-color: #F5F3EE;
+      color: #16181D;
+    }
+    ::selection {
+      background-color: #E3EFE8;
+      color: #16181D;
+    }
+  </style>
+</head>
+<body class="min-h-screen border-t-2 border-ink selection:bg-sage-soft selection:text-ink">
+
+  <!-- QUIET EDITORIAL NAVIGATION -->
+  <header class="border-b border-line bg-canvas/90 sticky top-0 z-40 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-6">
+        <a href="#" class="font-mono text-sm font-semibold tracking-tight text-ink flex items-center gap-2">
+          <span>SchemaForge</span>
+          <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded border border-line bg-surface text-graphite">v3.0.4</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-5 text-xs text-graphite">
+          <a href="#spec" class="hover:text-ink transition-colors">Locking Engine</a>
+          <a href="#architecture" class="hover:text-ink transition-colors">Architecture</a>
+          <a href="#benchmarks" class="hover:text-ink transition-colors">Benchmarks</a>
+          <a href="https://github.com/Syed-Haseeb97/unslop" target="_blank" class="hover:text-ink transition-colors">Source Code</a>
+        </nav>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="hidden sm:inline font-mono text-[11px] text-graphite">Postgres 13–17</span>
+        <a href="#install" class="bg-ink hover:bg-neutral-800 text-canvas font-medium text-xs px-3.5 py-1.5 rounded transition-colors">
+          Install CLI
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 pt-16 pb-24">
+
+    <!-- HERO SECTION: ASYMMETRIC, LEFT-ALIGNED, EDITORIAL WEIGHT -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pb-16 border-b border-line">
+      
+      <!-- LEFT COLUMN: EDITORIAL STATEMENT & DIRECT UTILITY -->
+      <div class="lg:col-span-7 pr-0 lg:pr-6">
+        <h1 class="font-serif text-5xl md:text-6xl lg:text-[72px] leading-[0.95] text-ink mb-6 tracking-tight">
+          Generate typed, <span class="italic">zero-downtime</span> Postgres migrations directly from your schema diffs.
+        </h1>
+
+        <p class="text-graphite text-base md:text-lg leading-relaxed mb-8 max-w-xl">
+          SchemaForge calculates table lock risks, orders DDL statements topographically, and produces deterministic, reversible migration files with synchronized TypeScript models. Zero cloud proxy. Zero telemetry.
+        </p>
+
+        <!-- DECISIVE SINGLE PRIMARY ACTION & TERMINAL COPY -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-10">
+          <div class="flex items-center border border-line bg-surface rounded px-3 py-2 font-mono text-xs text-ink w-full sm:w-auto">
+            <span class="text-graphite mr-2">$</span>
+            <span id="cmdText" class="font-medium">curl -fsSL https://schemaforge.sh/install | sh</span>
+            <button onclick="copyCmd()" class="ml-4 text-[10px] uppercase font-mono tracking-wider text-graphite hover:text-ink border-l border-line pl-3">
+              Copy
+            </button>
+          </div>
+          <a href="#spec" class="text-xs text-graphite hover:text-ink underline underline-offset-4 decoration-line transition-colors">
+            Read the 14-page lock spec &rarr;
+          </a>
+        </div>
+
+        <!-- FACTUAL METRICS ROW (NOT TESTIMONIALS) -->
+        <div class="grid grid-cols-3 gap-6 pt-6 border-t border-line/60">
+          <div>
+            <div class="font-mono text-xs text-graphite uppercase tracking-wider mb-1">Max Table Lock</div>
+            <div class="font-mono text-lg font-semibold text-ink">0.00ms</div>
+            <div class="text-[11px] text-graphite">Safe concurrent index builds</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-graphite uppercase tracking-wider mb-1">Parse Throughput</div>
+            <div class="font-mono text-lg font-semibold text-ink">11.4ms</div>
+            <div class="text-[11px] text-graphite">500-table full AST diff</div>
+          </div>
+          <div>
+            <div class="font-mono text-xs text-graphite uppercase tracking-wider mb-1">Verification</div>
+            <div class="font-mono text-lg font-semibold text-sage">Deterministic</div>
+            <div class="text-[11px] text-graphite">100% reversible rollbacks</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: "THE ONE THING WORTH LOOKING AT" -->
+      <!-- A live, interactive SQL diff inspector showing real schema execution -->
+      <div class="lg:col-span-5 w-full">
+        <div class="border border-line bg-surface rounded-lg shadow-sm overflow-hidden">
+          
+          <!-- TABS -->
+          <div class="flex items-center border-b border-line bg-canvas/40 px-3 pt-2 gap-1 text-xs font-mono">
+            <button onclick="switchTab('sql')" id="tab-sql" class="px-3 py-1.5 border-t border-x border-line bg-surface rounded-t text-ink font-medium -mb-[1px]">
+              20261121_add_billing.sql
+            </button>
+            <button onclick="switchTab('lock')" id="tab-lock" class="px-3 py-1.5 text-graphite hover:text-ink">
+              locks.json
+            </button>
+            <button onclick="switchTab('ts')" id="tab-ts" class="px-3 py-1.5 text-graphite hover:text-ink">
+              schema.d.ts
+            </button>
+            <div class="ml-auto flex items-center gap-1.5 py-1">
+              <span class="inline-block w-2 h-2 rounded-full bg-sage"></span>
+              <span class="text-[10px] text-sage font-medium uppercase tracking-wider">Lock-Safe</span>
+            </div>
+          </div>
+
+          <!-- CODE VIEWER VIEW 1: SQL -->
+          <div id="view-sql" class="p-4 font-mono text-[11px] leading-relaxed overflow-x-auto text-ink">
+            <div class="text-graphite mb-2">-- Autogenerated by SchemaForge 3.0.4</div>
+            <div class="text-graphite mb-2">-- Target: PostgreSQL 16 (Lock timeout: 2000ms)</div>
+            <p><span class="text-terracotta font-semibold">BEGIN;</span></p>
+            <p class="text-graphite">-- Non-blocking column addition with default (PG 11+ metadata-only rewrite)</p>
+            <p><span class="text-ink font-semibold">ALTER TABLE</span> organizations</p>
+            <p class="pl-4"><span class="text-ink font-semibold">ADD COLUMN</span> plan_tier <span class="text-sage">VARCHAR(32)</span> <span class="text-ink font-semibold">NOT NULL DEFAULT</span> <span class="text-terracotta">'standard'</span>;</p>
+            <p class="my-2 text-graphite">-- Concurrently build unique index to prevent write locks</p>
+            <p><span class="text-ink font-semibold">CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS</span></p>
+            <p class="pl-4">idx_orgs_plan ON organizations(id, plan_tier);</p>
+            <p class="mt-2"><span class="text-terracotta font-semibold">COMMIT;</span></p>
+          </div>
+
+          <!-- CODE VIEWER VIEW 2: LOCKS JSON -->
+          <div id="view-lock" class="hidden p-4 font-mono text-[11px] leading-relaxed overflow-x-auto text-ink">
+            <pre class="text-ink">{
+  <span class="text-graphite">"target_table":</span> <span class="text-terracotta">"organizations"</span>,
+  <span class="text-graphite">"lock_level":</span> <span class="text-sage">"SHARE UPDATE EXCLUSIVE"</span>,
+  <span class="text-graphite">"table_rewrite_required":</span> <span class="text-sage">false</span>,
+  <span class="text-graphite">"lock_duration_estimate_ms":</span> <span class="text-sage">0.42</span>,
+  <span class="text-graphite">"max_lock_timeout":</span> <span class="text-terracotta">"2000ms"</span>,
+  <span class="text-graphite">"concurrent_indexes":</span> [
+    <span class="text-terracotta">"idx_orgs_plan"</span>
+  ]
+}</pre>
+          </div>
+
+          <!-- CODE VIEWER VIEW 3: TS TYPES -->
+          <div id="view-ts" class="hidden p-4 font-mono text-[11px] leading-relaxed overflow-x-auto text-ink">
+            <pre class="text-ink"><span class="text-graphite">// Synchronized TypeScript Contract</span>
+<span class="text-ink font-semibold">export interface</span> Organization {
+  id: <span class="text-sage">string</span>;
+  name: <span class="text-sage">string</span>;
+  plan_tier: <span class="text-terracotta">'standard'</span> | <span class="text-terracotta">'growth'</span> | <span class="text-terracotta">'enterprise'</span>;
+  created_at: <span class="text-sage">Date</span>;
+}</pre>
+          </div>
+
+          <!-- FOOTER STATUS -->
+          <div class="px-4 py-2.5 bg-canvas/60 border-t border-line flex items-center justify-between text-[11px] font-mono text-graphite">
+            <span>AST Validation: Passed (14 rules)</span>
+            <span class="text-ink font-medium">Reversible: Yes</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CARDS THAT SAY SOMETHING REAL: CONCRETE WORKFLOWS ON 4-PT GRID -->
+    <section class="pt-16 pb-20">
+      <div class="mb-8">
+        <h2 class="font-serif text-3xl text-ink tracking-tight">Mechanics, not marketing.</h2>
+        <p class="text-graphite text-sm max-w-lg mt-1">What the tool actually executes when you run <code class="font-mono bg-surface border border-line px-1 rounded text-xs text-ink">schemaforge check</code> in CI.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- REAL CARD 1 -->
+        <div class="border border-line bg-surface p-6 rounded-lg">
+          <div class="font-mono text-[10px] text-graphite uppercase tracking-wider mb-2">01 / Locking Safety</div>
+          <h3 class="font-sans font-semibold text-base text-ink mb-2">Pre-flight Lock Matrix</h3>
+          <p class="text-graphite text-xs leading-relaxed mb-4">
+            Detects operations that trigger <code class="font-mono text-ink">ACCESS EXCLUSIVE</code> table rewrites. Flags missing lock timeouts before execution in production.
+          </p>
+          <div class="bg-canvas border border-line rounded p-2.5 font-mono text-[10px] text-ink space-y-1">
+            <div class="flex justify-between"><span class="text-graphite">ADD COLUMN with default</span><span class="text-sage font-medium">0ms lock</span></div>
+            <div class="flex justify-between"><span class="text-graphite">CREATE INDEX CONCURRENT</span><span class="text-sage font-medium">No write lock</span></div>
+            <div class="flex justify-between"><span class="text-graphite">DROP TABLE CASCADE</span><span class="text-terracotta font-medium">Blocked in CI</span></div>
+          </div>
+        </div>
+
+        <!-- REAL CARD 2 -->
+        <div class="border border-line bg-surface p-6 rounded-lg">
+          <div class="font-mono text-[10px] text-graphite uppercase tracking-wider mb-2">02 / Reversibility</div>
+          <h3 class="font-sans font-semibold text-base text-ink mb-2">Deterministic Rollbacks</h3>
+          <p class="text-graphite text-xs leading-relaxed mb-4">
+            Every forward migration file compiles an exact rollback script that validates foreign keys and restores constraints in reverse topological order.
+          </p>
+          <div class="bg-canvas border border-line rounded p-2.5 font-mono text-[10px] text-ink space-y-1">
+            <div class="text-graphite">-- down.sql compiled</div>
+            <div class="text-ink">DROP INDEX CONCURRENTLY idx_orgs_plan;</div>
+            <div class="text-ink">ALTER TABLE organizations DROP COLUMN plan_tier;</div>
+          </div>
+        </div>
+
+        <!-- REAL CARD 3 -->
+        <div class="border border-line bg-surface p-6 rounded-lg">
+          <div class="font-mono text-[10px] text-graphite uppercase tracking-wider mb-2">03 / Type Synchronization</div>
+          <h3 class="font-sans font-semibold text-base text-ink mb-2">Zero-Drift Code Contracts</h3>
+          <p class="text-graphite text-xs leading-relaxed mb-4">
+            Emits TypeScript definitions and runtime Zod validators matching migration hashes. Application code cannot build if out of sync with current schema state.
+          </p>
+          <div class="bg-canvas border border-line rounded p-2.5 font-mono text-[10px] text-ink space-y-1">
+            <div class="flex justify-between"><span class="text-graphite">Schema Hash:</span><span class="text-ink font-semibold">a8f90c21</span></div>
+            <div class="flex justify-between"><span class="text-graphite">Generated Output:</span><span class="text-ink">db/schema.d.ts</span></div>
+            <div class="flex justify-between"><span class="text-graphite">Compile Drift:</span><span class="text-sage font-medium">0 errors</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE FOOTNOTE -->
+    <footer class="pt-8 border-t border-line flex flex-col sm:flex-row items-center justify-between text-xs text-graphite font-mono">
+      <div>SchemaForge is open source under MIT. No cookies. No analytics.</div>
+      <div class="mt-2 sm:mt-0">Built using the <a href="file:///C:/Users/ADMIN/OneDrive/Desktop/unslop.md" class="underline text-ink">Unslop Design Standard</a>.</div>
+    </footer>
+
+  </main>
+
+  <script>
+    function switchTab(tab) {
+      ['sql', 'lock', 'ts'].forEach(t => {
+        const view = document.getElementById('view-' + t);
+        const tabBtn = document.getElementById('tab-' + t);
+        if (t === tab) {
+          view.classList.remove('hidden');
+          tabBtn.className = "px-3 py-1.5 border-t border-x border-line bg-surface rounded-t text-ink font-medium -mb-[1px]";
+        } else {
+          view.classList.add('hidden');
+          tabBtn.className = "px-3 py-1.5 text-graphite hover:text-ink";
+        }
+      });
+    }
+
+    function copyCmd() {
+      const text = document.getElementById('cmdText').innerText;
+      navigator.clipboard.writeText(text);
+      alert('Copied to clipboard: ' + text);
+    }
+  </script>
+</body>
+</html>
