@@ -3,6 +3,7 @@
 > **The Agent Skill against generic AI SaaS slop.**  
 > Kill the purple gradient, delete the glossy blobs, lose the hype words, stop centering everything, and give the user one thing worth looking at.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-unslop--pearl.vercel.app-16181D?style=flat-square)](https://unslop-pearl.vercel.app)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skill-SKILL.md-black?style=flat-square)](https://github.com/Syed-Haseeb97/unslop)
 [![License: MIT](https://img.shields.io/badge/License-MIT-black?style=flat-square)](LICENSE)
 
